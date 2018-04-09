@@ -71,7 +71,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QgsFileWidget" name="rasterFileWidget"/>
+     <widget class="QgsFileWidget" name="rasterFileDialog"/>
     </item>
     <item>
      <spacer name="verticalSpacer_2">
@@ -166,6 +166,10 @@
    <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>widthSpinBox</tabstop>
+  <tabstop>button_box</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
