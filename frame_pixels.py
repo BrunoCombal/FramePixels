@@ -30,7 +30,7 @@ import resources
 from frame_pixels_dialog import FramePixelsDialog
 import frame_pixels_tools
 import os.path
-
+from osgeo import gdal, gdalconst, ogr
 
 class FramePixels:
     """QGIS Plugin Implementation."""
@@ -189,11 +189,12 @@ class FramePixels:
         self.dlg.pointInputDialog.setFilter("*.shp")
 
         self.dlg.outputFileDialog.setFilter("*.shp")
+        self.dlg.outputFileDialog.setStorageMode(4)
 
     def checkRun(self):
         return True
 
-    def doProcessing(self):
+    def doProcessing(self, raster, inShapefile, npixels, outShapefile):
         # open raster
         inRaster = gdal.Open(raster, gdalconst.GA_ReadOnly)
         if inRaster is None:
@@ -223,7 +224,7 @@ class FramePixels:
         except IOException, e:
             print "Could not create output file"
             print "{}".format(e)
-            outDS=None
+            outDS = None
         # copy original fields to the output
         layerDefinition = inLayer.GetLayerDefn()
         for ii in range(layerDefinition.GetFieldCount()):
@@ -238,7 +239,7 @@ class FramePixels:
             xx = geom.Centroid().GetX()
             yy = geom.Centroid().GetY()
 
-            xStart, yStart, xEnd, yEnd = getPixelsSquareCorners(xx, yy, gt, npixels)
+            xStart, yStart, xEnd, yEnd = frame_pixels_tools.getPixelsSquareCorners(xx, yy, gt, npixels)
 
             poly = ogr.Geometry(ogr.wkbPolygon)
             ring = ogr.Geometry(ogr.wkbLinearRing)
@@ -278,3 +279,7 @@ class FramePixels:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             print self.dlg.pointInputDialog.filePath()
+            self.doProcessing(self.dlg.rasterFileDialog.filePath(),
+                self.dlg.pointInputDialog.filePath(),
+                self.dlg.widthSpinBox.value(),
+                self.dlg.outputFileDialog.filePath())
