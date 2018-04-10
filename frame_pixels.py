@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QFileDialog
 from PyQt4.QtGui import QDialog
 from qgis.gui import QgsFileWidget
 # Initialize Qt resources from file resources.py
@@ -68,6 +68,9 @@ class FramePixels:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'FramePixels')
         self.toolbar.setObjectName(u'FramePixels')
+
+        # business variables
+        self.outputPath = ''
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -159,6 +162,8 @@ class FramePixels:
 
         self.actions.append(action)
 
+        self.initWidgets()
+
         return action
 
     def initGui(self):
@@ -170,7 +175,6 @@ class FramePixels:
             text=self.tr(u'Frame pixels'),
             callback=self.run,
             parent=self.iface.mainWindow())
-
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -188,10 +192,30 @@ class FramePixels:
 
         self.dlg.pointInputDialog.setFilter("*.shp")
 
-        self.dlg.outputFileDialog.setFilter("*.shp")
-        self.dlg.outputFileDialog.setStorageMode(4)
+        #self.dlg.outputFileDialog.setFilter("*.shp")
+        #self.dlg.outputFileDialog.setStorageMode(1)
 
-    def checkRun(self):
+        self.dlg.buttonOutfile.clicked.connect(self.defineOutput)
+
+    def addExtension(self, fname, ext):
+        thisExt = os.path.splitext(fname)[-1]
+        if thisExt != ext:
+            return '{}{}'.format(fname, ext)
+        else:
+            return fname
+
+    def defineOutput(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.AnyFile)
+        thisFile = dialog.getSaveFileName(self.dlg, "Define an ESRI shapefile name", self.outputPath, filter='*.shp') #os.path.expanduser("~"))
+        if thisFile=='':
+            return True
+        outShapefile = self.addExtension(thisFile, '.shp')
+        self.outputPath = os.path.basename(outShapefile)
+
+        # once all ok, update text
+        self.dlg.lineEditOutfile.setText(outShapefile)
+
         return True
 
     def doProcessing(self, raster, inShapefile, npixels, outShapefile):
@@ -248,7 +272,6 @@ class FramePixels:
             ring.AddPoint(xEnd, yEnd)
             ring.AddPoint(xStart,yEnd)
             ring.AddPoint(xStart, yStart)
-            print xStart, xEnd, yStart, yEnd
             poly.AddGeometry( ring )
             outFeature = ogr.Feature(outLayer.GetLayerDefn())
             outFeature.SetGeometry(poly)
@@ -264,22 +287,42 @@ class FramePixels:
 
         return True
 
+    def doCheckToGo(self):
+        if not os.path.isfile(self.dlg.pointInputDialog.filePath()):
+            self.dlg.messageArea.setText('Input vector file is not defined')
+            return False
+        if not os.path.isfile(self.dlg.rasterFileDialog.filePath()):
+            self.dlg.messageArea.setText('Input raster file is not defined')
+            return False
+
+        return True
+
     def run(self):
         """Run method that performs all the real work"""
         # show the dialog
-        self.initWidgets()
         self.dlg.show()
         # Run the dialog event loop
+        checkToGo = False
+        while not checkToGo:
+            runApp = self.dlg.exec_()
+            # See if OK was pressed
+            if runApp: # run=True, check if one can run
+                checkToGo = self.doCheckToGo()
+            else: # cancel=True
+                checkToGo = True
 
-
-
-        result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if runApp:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            print self.dlg.pointInputDialog.filePath()
-            self.doProcessing(self.dlg.rasterFileDialog.filePath(),
+            outShapefile = self.dlg.lineEditOutfile.text()
+            #os.path.join(self.dlg.outputFileDialog.filePath(),'machin.shp' )
+            self.dlg.messageArea.setText('Processing, please wait...')
+            if self.doProcessing(self.dlg.rasterFileDialog.filePath(),
                 self.dlg.pointInputDialog.filePath(),
                 self.dlg.widthSpinBox.value(),
-                self.dlg.outputFileDialog.filePath())
+                outShapefile):
+                if self.dlg.checkBoxOpenResult.checkState():
+                    thisLayer = self.iface.addVectorLayer(outShapefile, "{}".format(os.path.basename(outShapefile).replace('.shp','')), "ogr")
+
+# end of code
