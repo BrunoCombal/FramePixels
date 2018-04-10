@@ -291,8 +291,23 @@ class FramePixels:
         if not os.path.isfile(self.dlg.pointInputDialog.filePath()):
             self.dlg.messageArea.setText('Input vector file is not defined')
             return False
+
         if not os.path.isfile(self.dlg.rasterFileDialog.filePath()):
             self.dlg.messageArea.setText('Input raster file is not defined')
+            return False
+
+        if os.path.isfile(self.dlg.lineEditOutfile.text()): # try to remove it
+            try:
+                outDriver = ogr.GetDriverByName("ESRI Shapefile")
+                if os.path.exists(self.outShapefile):
+                    outDriver.DeleteDataSource(self.outShapefile)
+            except IOError, e:
+                self.dlg.messageArea.setText('Could not remove file {}'.format(self.outShapefile))
+                return False
+            return True
+
+        if not os.path.isdir( os.path.dirname(self.dlg.lineEditOutfile.text()) ):
+            self.dlg.messageArea.setText('Output directory {} does not exist'.format(os.path.dirname(self.dlg.lineEditOutfile.text())))
             return False
 
         return True
