@@ -10,4 +10,6 @@ The plugin takes in input:
 
 Each point of the input vector file is located on a pixel of the input raster; this pixel will be the center of the squares to draw, each square having to match the border of the pixels. As the pixel selected by the input points is the center of the square to draw, the size of the square (its width) must be an odd number of pixels.
 
+![Image 1](https://github.com/BrunoCombal/FramePixels/blob/master/help/source/img1.png) ![Image 2](https://github.com/BrunoCombal/FramePixels/blob/master/help/source/img2.png)
+
 More information: https://github.com/BrunoCombal/PointToPolygon/wiki
