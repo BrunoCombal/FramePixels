@@ -36,13 +36,14 @@ def InvGeoTransform(gt_in):
     return gt_out
 
 def mapToPixel(mx, my, gt):
-	if gt[2] + gt[4] == 0:  # Simple calc, no inversion required
-		px = (mx - gt[0]) / gt[1]
-		py = (my - gt[3]) / gt[5]
-	else:
-		px, py = ApplyGeoTransform(mx, my, InvGeoTransform(gt))
-	return int(px + 0.5), int(py + 0.5)
-
+    if gt[2] + gt[4] == 0:  # Simple calc, no inversion required
+        px = (mx - gt[0]) / gt[1]
+        py = (my - gt[3]) / gt[5]
+    else:
+        px, py = ApplyGeoTransform(mx, my, InvGeoTransform(gt))
+    #return int(px + 0.5), int(py + 0.5)
+    return int(px), int(py)
+    
 def pixelToMap(px, py, gt):
 	mx, my = ApplyGeoTransform(px, py, gt)
 	return mx, my
@@ -54,9 +55,11 @@ def getPixelsSquareCorners(x, y, GT, N):
     xStartPix = xPix - N/2
     yStartPix = yPix + N/2
     # for the lower left bound, take coordinates of the upper left corner of the next pixel
-    xEndPix = xPix + N/2 + 1 
-    yEndPix = yPix - N/2 -1
+    #xEndPix = xPix + N/2 + 1 
+    #yEndPix = yPix - N/2 -1
     # convert back to coordinates
     xStart, yStart = pixelToMap(xStartPix, yStartPix, GT)
-    xEnd, yEnd = pixelToMap(xEndPix, yEndPix, GT)
+    #xEnd, yEnd = pixelToMap(xEndPix, yEndPix, GT)
+    xEnd = xStart + GT[1]
+    yEnd = yStart + GT[5]
     return xStart, yStart, xEnd, yEnd
