@@ -14,7 +14,7 @@ version=0.2
 author=Bruno Combal
 email=bruno.combal@gmail.com
 
-about=Provide a brief description of the plugin and its purpose.
+about=Create square polygon aroung points, which borders exactly fit pixels borders of a reference raster.
 
 tracker=https://github.com/BrunoCombal/FramePixels/issues
 repository=https://github.com/BrunoCombal/FramePixels
