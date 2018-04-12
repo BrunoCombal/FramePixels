@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>422</height>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,12 +20,18 @@
      <x>10</x>
      <y>10</y>
      <width>511</width>
-     <height>401</height>
+     <height>451</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Input sampling file</string>
       </property>
@@ -33,6 +39,19 @@
     </item>
     <item>
      <widget class="QgsFileWidget" name="pointInputDialog"/>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="messageInVector">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="acceptRichText">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <spacer name="verticalSpacer">
@@ -49,6 +68,12 @@
     </item>
     <item>
      <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Reference raster file</string>
       </property>
@@ -56,6 +81,19 @@
     </item>
     <item>
      <widget class="QgsFileWidget" name="rasterFileDialog"/>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="messageInRaster">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="acceptRichText">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <spacer name="verticalSpacer_2">
@@ -72,6 +110,12 @@
     </item>
     <item>
      <widget class="QLabel" name="label_3">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Square width (pixel, odd number)</string>
       </property>
@@ -114,6 +158,12 @@
     </item>
     <item>
      <widget class="QLabel" name="label_4">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Output shapefile</string>
       </property>
