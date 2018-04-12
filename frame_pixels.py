@@ -162,8 +162,6 @@ class FramePixels:
 
         self.actions.append(action)
 
-        self.initWidgets()
-
         return action
 
     def initGui(self):
@@ -175,6 +173,8 @@ class FramePixels:
             text=self.tr(u'Frame pixels'),
             callback=self.run,
             parent=self.iface.mainWindow())
+
+        self.initWidgets()
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -196,6 +196,8 @@ class FramePixels:
         #self.dlg.outputFileDialog.setStorageMode(1)
 
         self.dlg.buttonOutfile.clicked.connect(self.defineOutput)
+
+        self.dlg.messageArea.setText('')
 
     def addExtension(self, fname, ext):
         thisExt = os.path.splitext(fname)[-1]
@@ -239,8 +241,6 @@ class FramePixels:
         # vector out
         try:
             outDriver = ogr.GetDriverByName("ESRI Shapefile")
-            if os.path.exists(outShapefile):
-                outDriver.DeleteDataSource(outShapefile)
             outDS = outDriver.CreateDataSource(outShapefile)
             outLayer = outDS.CreateLayer("polygon", spatialRef, geom_type=ogr.wkbPolygon)
             if outLayer is None:
@@ -339,5 +339,6 @@ class FramePixels:
                 outShapefile):
                 if self.dlg.checkBoxOpenResult.checkState():
                     thisLayer = self.iface.addVectorLayer(outShapefile, "{}".format(os.path.basename(outShapefile).replace('.shp','')), "ogr")
+            self.dlg.messageArea.setText('')
 
 # end of code
