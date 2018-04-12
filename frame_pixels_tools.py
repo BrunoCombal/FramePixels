@@ -49,17 +49,36 @@ def pixelToMap(px, py, gt):
 	return mx, my
 
 # get coordinates of a square of N pixels width around coordinate (x, y)
-def getPixelsSquareCorners(x, y, GT, N):
+def getPixelsSquareCornersWrong(x, y, GT, N):
     # get pixels positions
     xPix, yPix = mapToPixel(x, y, GT)
-    xStartPix = xPix - N/2
-    yStartPix = yPix + N/2
+    xStartPix = xPix - int(N/2)
+    yStartPix = yPix + int(N/2)
     # for the lower left bound, take coordinates of the upper left corner of the next pixel
     #xEndPix = xPix + N/2 + 1 
     #yEndPix = yPix - N/2 -1
     # convert back to coordinates
-    xStart, yStart = pixelToMap(xStartPix, yStartPix, GT)
+    xStart, yStart = pixelToMap(xStartPix-0.5, yStartPix+0.5, GT)
+
     #xEnd, yEnd = pixelToMap(xEndPix, yEndPix, GT)
-    xEnd = xStart + GT[1]
-    yEnd = yStart + GT[5]
+    xEnd = xStart + N * GT[1]
+    yEnd = yStart + N * GT[5]
+
+    print xPix, xStartPix, x, xStart
+
+    return xStart, yStart, xEnd, yEnd
+
+# get coordinates of a square of N pixels width around coordinate (x, y)
+def getPixelsSquareCorners(x, y, GT, N):
+    # get pixels positions
+    xStartPix = int((x - GT[0])/GT[1])  - N/2
+    yStartPix   = int((y - GT[3])/GT[5])  - N/2
+    # convert back to coordinates
+    xStart = GT[0] + xStartPix * GT[1]
+    yStart = GT[3] + yStartPix * GT[5]
+
+    #xEnd, yEnd = pixelToMap(xEndPix, yEndPix, GT)
+    xEnd = xStart + N * GT[1]
+    yEnd = yStart + N * GT[5]
+
     return xStart, yStart, xEnd, yEnd
