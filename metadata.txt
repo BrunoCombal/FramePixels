@@ -10,7 +10,7 @@
 name=Frame Pixels
 qgisMinimumVersion=2.18
 description=Draw a square around points matching pixels borders.
-version=0.3
+version=0.4
 author=Bruno Combal
 email=bruno.combal@gmail.com
 
@@ -23,7 +23,8 @@ repository=https://github.com/BrunoCombal/FramePixels
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.3 - Correcting bug in points geolocation
+changelog=0.4 - Fixed bugs in box geolocation, new icon
+    0.3 - Correcting bug in points geolocation
     0.2 - First functional version
     0.1 - Init
 
