@@ -191,11 +191,15 @@ class FramePixels:
         self.dlg.widthSpinBox.lineEdit().setReadOnly(True)
 
         self.dlg.pointInputDialog.setFilter("*.shp")
+        self.dlg.pointInputDialog.fileChanged.connect(self.getShapefile)
+
+        self.dlg.rasterFileDialog.fileChanged.connect(self.getRasterfile)
 
         #self.dlg.outputFileDialog.setFilter("*.shp")
         #self.dlg.outputFileDialog.setStorageMode(1)
 
         self.dlg.buttonOutfile.clicked.connect(self.defineOutput)
+
 
         self.dlg.messageArea.setText('')
 
@@ -218,6 +222,31 @@ class FramePixels:
         # once all ok, update text
         self.dlg.lineEditOutfile.setText(outShapefile)
 
+        return True
+
+    def getShapefile(self):
+        inDataSource = ogr.Open(self.dlg.pointInputDialog.filePath(), 0)
+        if inDataSource is None:
+            return False
+        inLayer = inDataSource.GetLayer()
+        spatialRef = inLayer.GetSpatialRef()
+        print 'spatial ref',spatialRef
+        if spatialRef is None:
+            self.dlg.messageInVector.setText('Unknown projection.')
+        elif spatialRef == '':
+            self.dlg.messageInVector.setText('Unknown projection.')
+        else:
+            self.dlg.messageInVector.setText('{}'.format(spatialRef))
+        return True
+
+    def getRasterfile(self):
+        inRaster = gdal.Open(self.dlg.rasterFileDialog.filePath(), gdalconst.GA_ReadOnly)
+        if inRaster is None:
+            return False
+        proj = inRaster.GetProjection()
+        gt = inRaster.GetGeoTransform()
+        self.dlg.messageInRaster.setText('Geotransform:{}\n{}\n'.format(gt, proj))
+        inRaster = None
         return True
 
     def doProcessing(self, raster, inShapefile, npixels, outShapefile):
